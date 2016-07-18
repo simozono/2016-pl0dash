@@ -35,7 +35,7 @@
 "*"			{ printf("T_MULTI:   \"%s\"\n", yytext); }
 "/"			{ printf("T_DEVIDE:  \"%s\"\n", yytext); }
 [[:alpha:]][[:alpha:][:digit:]_]*    { printf("T_ID:      \"%s\"\n", yytext); }
-[[:digit:]]+|"0x"[0-9a-h]+    { printf("T_NUMBER:     \"%s\"\n", yytext); }
+[[:digit:]]+|"0x"[0-9a-h]+    { printf("T_NUMBER:  \"%s\"\n", yytext); }
 .                             { printf("T_ERROR      \"%s\"\n", yytext); }
 %%
 int main(int argc, char *argv[]) {
