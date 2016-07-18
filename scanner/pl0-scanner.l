@@ -1,9 +1,8 @@
 %{
   #include <stdio.h>
   #include <string.h>
-  int yywrap(void);
-
 %}
+%option noyywrap
 %%
 [[:blank:]\n]+		{ printf("T_WSP: \n"); }
 "const"			{ printf("T_CONST:   \"%s\"\n", yytext); }
