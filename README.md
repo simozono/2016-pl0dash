@@ -17,5 +17,5 @@
 * 第20回授業(後期第05回) p. 250～の構文解析器のプログラム
   * [字句解析用サブルーチン(lex版)](exp-parser/exp-scanner.l)
   * [トークン定義ファイル](scanner/tokentable.h)
-  * [LL(1)構文解析器本体](exp-scanner/exp-ll-parser01.c)
-  * [サンプルファイル](exp-scanner/sample)
+  * [LL(1)構文解析器本体](exp-parser/exp-ll-parser01.c)
+  * [サンプルファイル](exp-parser/sample)
