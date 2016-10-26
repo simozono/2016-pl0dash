@@ -1,7 +1,8 @@
-/* 簡易演算文法用 LL(1)再帰下降型構文解析器 No.01
- *              2015年後期 鹿児島高専
- *              3年生 言語処理系 授業用
- *     * 構文解析しか行っていない
+/* 文法G4用 LL(1)再帰下降型構文解析器 No.01
+ * (文法G4 は 第20回授業(後期第05回)p.247～)
+ *
+ *   2016年後期 鹿児島高専
+ *   3年生 言語処理系 授業用
  */
 
 #include <stdio.h>
@@ -53,9 +54,9 @@ int main(int argc, char *argv[]) {
   parse_Expression();
   if (nextToken != T_EOF) parse_error("not EOF");
  
-  /* 終了コード生成はじめ */
+  /* 終了アセンブリコード生成はじめ */
   printf ("END\n");
-  /* 終了コード生成おわり */
+  /* 終了アセンブリコード生成おわり */
 }
 
 void parse_Expression() { /* E → TE' */
