@@ -2,18 +2,18 @@
 ここでは、2016年度に「言語処理系」(鹿児島高専/情報工学科/3年生向け)の授業の
 際に使用したプログラムコードを提示しています。(自分の忘備録を兼ねています)
 
-## コンパイル対象言語
-### PL/0'
+### コンパイル対象言語
+*  PL/0'
 
-## プログラムの説明
+### プログラムの説明
 
-### [字句解析器](scanner)
-* [「PL/0'」用字句解析器(lex版)](scanner/pl0-scanner.l)
+1. [字句解析器](scanner)
+  * [「PL/0'」用字句解析器(lex版)](scanner/pl0-scanner.l)
 
-### [簡単な文法G4](exp-parser)
+2. [簡単な文法G4](exp-parser)
 第20回授業(後期第05回)p.247 で示した文法に対応する構文解析器等です。
 * 第20回授業(後期第05回) p. 250～の構文解析器のプログラム
-** [字句解析用サブルーチン(lex版)](exp-parser/exp-scanner.l)
-** [トークン定義ファイル](scanner/tokentable.h)
-** [LL(1)構文解析器本体](exp-scanner/exp-ll-parser01.c)
-** [サンプルファイル](exp-scanner/sample)
+  * [字句解析用サブルーチン(lex版)](exp-parser/exp-scanner.l)
+  * [トークン定義ファイル](scanner/tokentable.h)
+  * [LL(1)構文解析器本体](exp-scanner/exp-ll-parser01.c)
+  * [サンプルファイル](exp-scanner/sample)
