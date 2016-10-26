@@ -7,11 +7,13 @@
 
 ### プログラムの説明
 
-1. [字句解析器](scanner)
+#### 1. [字句解析器](scanner)
   * [「PL/0'」用字句解析器(lex版)](scanner/pl0-scanner.l)
 
-2. [簡単な文法G4](exp-parser)
+#### 2. [簡単な文法G4](exp-parser)
+
 第20回授業(後期第05回)p.247 で示した文法に対応する構文解析器等です。
+
 * 第20回授業(後期第05回) p. 250～の構文解析器のプログラム
   * [字句解析用サブルーチン(lex版)](exp-parser/exp-scanner.l)
   * [トークン定義ファイル](scanner/tokentable.h)
