@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
   /* 終了アセンブリコード生成はじめ */
   printf ("END\n");
   /* 終了アセンブリコード生成おわり */
+  exit(EXIT_SUCCESS);
 }
 
 void parse_Expression() { /* E → TE' */

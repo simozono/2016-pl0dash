@@ -6,6 +6,8 @@ YACC = bison
 EXT_TOKENTABLE = ../scanner/tokentable.h
 
 all: exp-ll-parser01
+tests:
+	./exp-ll-parser01 ../sample/exp01.txt
 clean:
 	rm -f exp-ll-parser01 exp-ll-parser01.o
 	rm -f exp-scanner-ll.c exp-scanner-ll.o

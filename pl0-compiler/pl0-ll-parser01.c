@@ -24,13 +24,15 @@ int getToken(void);  /* トークンを取得する関数 */
 /* 非終端記号に対応した関数 */
 void parse_Program(void);
 void parse_Block(void);
-void parse_Decl(void);
+void parse_ConstDeclList(void);
 void parse_ConstDecl(void);
 void parse_ConstIdList(void);
 void parse_ConstIdList_dash(void);
+void parse_VarDeclList(void);
 void parse_VarDecl(void);
 void parse_VarIdList(void);
 void parse_VarIdList_dash(void);
+void parse_FuncDeclList(void);
 void parse_FuncDecl(void);
 void parse_FuncDeclIdList(void);
 void parse_FuncDeclIdList_dash(void);
@@ -57,7 +59,7 @@ int getToken(void) { /* トークンを取得する関数 */
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
-    printf ("argument error\n");
+    printf ("ソースプログラムのファイル名のみ指定してください\n");
     exit(EXIT_FAILURE);
   }
 
@@ -71,6 +73,9 @@ int main(int argc, char *argv[]) {
   nextToken = getToken();
   parse_Program();
   if (nextToken != T_EOF) pl0_error("",line_no, "EOFでない");
+
+  /* 正常終了 */
+  exit(EXIT_SUCCESS);
 }
 
 void parse_Program() {
@@ -82,22 +87,17 @@ void parse_Program() {
 
 void parse_Block() {
   printf("Enter Block\n");
-  parse_Decl();
+  parse_ConstDeclList();
+  parse_VarDeclList();
+  parse_FuncDeclList();
   parse_Statement();
 }
 
-void parse_Decl() {
-  printf("Enter Decl\n");
+void parse_ConstDeclList() {
+  printf("Enter ConstDeclList\n");
   if (nextToken == T_CONST) {
     parse_ConstDecl();
-    parse_Decl();
-  } else if (nextToken == T_VAR) {
-    parse_VarDecl();
-    parse_Decl();
-  } else if (nextToken == T_FUNC) {
-    parse_FuncDecl();
-    parse_Decl();
-  } else {
+    parse_ConstDeclList();
   }
 }
 
@@ -137,6 +137,14 @@ void parse_ConstIdList_dash() {
   }
 }
 
+void parse_VarDeclList() {
+  printf("Enter VarDeclList\n");
+  if (nextToken == T_VAR) {
+    parse_VarDecl();
+    parse_VarDeclList();
+  }
+}
+
 void parse_VarDecl() {
   printf("Enter VarDecl\n");
   /* T_VAR では何もしない。次のトークンを読む */
@@ -162,6 +170,14 @@ void parse_VarIdList_dash() {
     /* 変数名の登録をここで行う */
     nextToken = getToken();
     parse_VarIdList_dash();
+  }
+}
+
+void parse_FuncDeclList() {
+  printf("Enter VarDeclList\n");
+  if (nextToken == T_FUNC) {
+    parse_FuncDecl();
+    parse_FuncDeclList();
   }
 }
 
