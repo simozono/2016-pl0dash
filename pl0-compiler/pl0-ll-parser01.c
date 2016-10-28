@@ -79,38 +79,47 @@ int main(int argc, char *argv[]) {
 }
 
 void parse_Program() {
+  /* <Program> -> <Block> T_PRIOD */ 
   printf("Enter Program\n");
   parse_Block();
   if (nextToken != T_PERIOD) pl0_error(yytext, line_no, "ピリオドでない");
   nextToken = getToken();
+  printf("Exit  Program\n");
 }
 
 void parse_Block() {
+  /* <Block> -> <ConstDeclList> <VarDeclList> <FuncDeclList> <Statement> */
   printf("Enter Block\n");
   parse_ConstDeclList();
   parse_VarDeclList();
   parse_FuncDeclList();
   parse_Statement();
+  printf("Exit  Block\n");
 }
 
 void parse_ConstDeclList() {
+  /* <ConstDeclList> -> <ConstDecl> <ConstDeclList> | ε */
   printf("Enter ConstDeclList\n");
-  if (nextToken == T_CONST) {
+  if (nextToken == T_CONST) { /* First(<ConstDecl>) */
     parse_ConstDecl();
     parse_ConstDeclList();
   }
+  printf("Exit  ConstDeclList\n");
 }
 
 void parse_ConstDecl() {
+  /* <ConstDecl> -> T_CONST <ConstIdList> T_SEMIC */
   printf("Enter ConstDecl\n");
   /* T_CONST では何もしない。次のトークンを読む */
   nextToken = getToken();
   parse_ConstIdList();
   if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
   nextToken = getToken();
+  printf("Exit  ConstDecl\n");
 }
 
 void parse_ConstIdList() {
+  /* <ConstIdList> -> T_ID T_EQ T_NUMBER <ConstIdList_dash> */
   printf("Enter ConstIdList\n");
   if (nextToken != T_ID) pl0_error(yytext, line_no, "定数名でない");
   nextToken = getToken();
@@ -120,9 +129,11 @@ void parse_ConstIdList() {
   /* 定数名の登録および値の設定をここで行う */
   nextToken = getToken();
   parse_ConstIdList_dash();
+  printf("Exit  ConstIdList\n");
 }
 
 void parse_ConstIdList_dash() {
+  /* <ConstIdList_dash> -> T_COMMA T_ID T_EQ T_NUMBER <ConstIdList_dash> | ε */
   printf("Enter ConstIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
@@ -135,34 +146,42 @@ void parse_ConstIdList_dash() {
     nextToken = getToken();
     parse_ConstIdList_dash();
   }
+  printf("Exit  ConstIdList_dash\n");
 }
 
 void parse_VarDeclList() {
+  /* <VarDeclList> -> <VarDecl> <VarDeclList> | ε */
   printf("Enter VarDeclList\n");
-  if (nextToken == T_VAR) {
+  if (nextToken == T_VAR) { /* First(<VarDecl>) */
     parse_VarDecl();
     parse_VarDeclList();
   }
+  printf("Exit  VarDeclList\n");
 }
 
 void parse_VarDecl() {
+  /* <VarDec> -> T_VAR <VarIdList> T_SEMIC */
   printf("Enter VarDecl\n");
   /* T_VAR では何もしない。次のトークンを読む */
   nextToken = getToken();
   parse_VarIdList();
   if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
   nextToken = getToken();
+  printf("Exit  VarDecl\n");
 }
 
 void parse_VarIdList() {
+  /* <VarIdList_dash> -> T_ID <VarIdList_dash> */
   printf("Enter VarIdList\n");
   if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
   /* 変数名の登録をここで行う */
   nextToken = getToken();
   parse_VarIdList_dash();
+  printf("Exit  VarIdList\n");
 }
 
 void parse_VarIdList_dash() {
+  /* <VarIdList_dash> -> T_COMMA T_ID <VarIdList_dash> | ε */
   printf("Enter VarIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
@@ -171,17 +190,21 @@ void parse_VarIdList_dash() {
     nextToken = getToken();
     parse_VarIdList_dash();
   }
+  printf("Exit  VarIdList_dash\n");
 }
 
 void parse_FuncDeclList() {
+  /* <FuncDeclList> -> <FuncDecl> <FuncDeclList> | ε */
   printf("Enter VarDeclList\n");
-  if (nextToken == T_FUNC) {
+  if (nextToken == T_FUNC) { /* First(<FuncDecl>) */
     parse_FuncDecl();
     parse_FuncDeclList();
   }
+  printf("Exit  VarDeclList\n");
 }
 
 void parse_FuncDecl() {
+  /* <FuncDecl> -> T_FUNC T_ID T_LPAR <FuncDeclIdList> T_RPAR <Block> T_SEMIC */
   printf("Enter FuncDecl\n");
   /* T_FUNC では何もしない。次のトークンを読む */
   nextToken = getToken();
@@ -195,23 +218,28 @@ void parse_FuncDecl() {
   parse_Block();
   if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
   nextToken = getToken();
+  printf("Exit  FuncDecl\n");
 }
 
 void parse_FuncDeclIdList() {
+  /* <FuncDeclIdList> -> T_ID <FuncDeclIdList_dash> | ε */
   printf("Enter FuncDeclIdList\n");
   if (nextToken == T_ID) {
     nextToken = getToken();
     parse_FuncDeclIdList_dash();
   }
+  printf("Exit  FuncDeclIdList\n");
 }
 
 void parse_FuncDeclIdList_dash() {
+  /* <FuncDeclIdList_dash> -> T_COMMA T_ID <FuncDeclIdList_dash> | ε */
   printf("Enter FuncDeclIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "仮引数名でない");
     parse_FuncDeclIdList_dash();
   }
+  printf("Exit  FuncDeclIdList_dash\n");
 }
 
 void parse_Statement() {
@@ -247,23 +275,27 @@ void parse_Statement() {
   } else if (nextToken ==  T_WRITELN) { /* writeln */
     /* writeln の処理 */
     nextToken = getToken();
-  } else {
   }
+  printf("Exit  Statement\n");
 }
 
 void parse_StatementList() {
+  /* <StatementList> -> <Statement> <StatementList_dash> */
   printf("Enter StatementList\n");
   parse_Statement();
   parse_StatementList_dash();
+  printf("Exit  StatementList\n");
 }
 
 void parse_StatementList_dash() {
+  /* <StatementList_dash> -> T_SEMIC <Statement> <StatementList_dash> | ε */
   printf("Enter StatementList_dash\n");
   if (nextToken == T_SEMIC) {
     nextToken = getToken();
     parse_Statement();
     parse_StatementList_dash();
   }
+  printf("Exit  StatementList_dash\n");
 }
 
 void parse_Condition() {
@@ -286,10 +318,11 @@ void parse_Condition() {
     parse_Expression();
     /* ここで operator 処理 */
   }
+  printf("Exit  Condition\n");
 }
 
 void parse_Expression() {
-  printf("Enter Expressions\n");
+  printf("Enter Expression\n");
   if (nextToken == T_PLUS) {
     nextToken = getToken();
     parse_Term();
@@ -304,6 +337,7 @@ void parse_Expression() {
     parse_Term();
     parse_Expression_dash();
   }
+  printf("Exit  Expression\n");
 }
 
 void parse_Expression_dash() {
@@ -320,12 +354,14 @@ void parse_Expression_dash() {
     parse_Expression_dash();
   } else {
   }
+  printf("Exit  Expression_dash\n");
 }
 
 void parse_Term() {
   printf("Enter Term\n");
   parse_Factor();
   parse_Term_dash();
+  printf("Exit  Term\n");
 }
 
 void parse_Term_dash() {
@@ -340,8 +376,8 @@ void parse_Term_dash() {
     parse_Factor();
     /* ここで / の処理 */
     parse_Term_dash();
-  } else {
   }
+  printf("Exit  Term_dash\n");
 }
 
 void parse_Factor() {
@@ -360,6 +396,7 @@ void parse_Factor() {
   } else {
     pl0_error(yytext, line_no, "式がおかしい");
   }
+  printf("Exit  Factor\n");
 }
 
 void parse_FuncArgList() {
@@ -369,8 +406,8 @@ void parse_FuncArgList() {
       || nextToken == T_LPAR) { /* First(<Expression>)に含まれるもの */
     parse_Expression();
     parse_FuncArgList_dash();
-  } else {
   }
+  printf("Exit  FuncArgList\n");
 }
 
 void parse_FuncArgList_dash() {
@@ -379,6 +416,6 @@ void parse_FuncArgList_dash() {
     nextToken = getToken();
     parse_Expression();
     parse_FuncArgList_dash();
-  } else {
   }
+  printf("Exit  FuncArgList_dash\n");
 }
