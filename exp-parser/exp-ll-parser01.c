@@ -37,13 +37,13 @@ void parse_error(char *error_message) {
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
-    printf ("argument error\n");
+    printf ("ソースプログラムのファイル名のみ指定してください\n");
     exit(EXIT_FAILURE);
   }
 
   yyin = fopen(argv[1], "r"); /* ファイルを開く処理 */
   if (yyin  == NULL) {
-    printf ("%s file not found.\n", argv[1]);
+    printf ("%s というファイルがない\n", argv[1]);
     exit(EXIT_FAILURE);
   }
 
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
   /* 構文解析スタート S=E */
   parse_Expression();
-  if (nextToken != T_EOF) parse_error("not EOF");
+  if (nextToken != T_EOF) parse_error("EOFでない");
  
   /* 終了アセンブリコード生成はじめ */
   printf ("END\n");
@@ -102,7 +102,7 @@ void parse_Factor() { /* F → (E)|T_NUMBER */
   if (nextToken == T_LPAR) {
     nextToken = getToken();
     parse_Expression();
-    if (nextToken != T_RPAR) parse_error("not )");
+    if (nextToken != T_RPAR) parse_error(")がない");
     nextToken = getToken();
   } else if (nextToken == T_NUMBER) {
     /* T_NUMBER のコード生成はじまり */
@@ -111,6 +111,6 @@ void parse_Factor() { /* F → (E)|T_NUMBER */
     /* T_NUMBER のコード生成おわり */
     nextToken = getToken();
   } else {
-    parse_error("not number and not (");
+    parse_error("数または(でない");
   }
 }
