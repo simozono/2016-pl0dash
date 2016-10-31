@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
 	 printf("構文解析エラー\n");
 	 exit(EXIT_FAILURE);
   }
-  
+  printf ("END\n");
   exit(EXIT_SUCCESS);
 }
