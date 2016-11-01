@@ -40,5 +40,6 @@ Exit  StatementList
 Exit  Statement
 Exit  Block
 Exit  Program
+構文解析は全て成功
 $
 ````

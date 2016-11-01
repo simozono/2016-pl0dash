@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
   if (nextToken != T_EOF) pl0_error("",line_no, "EOFでない");
 
   /* 正常終了 */
+  printf("構文解析は全て成功\n");
   exit(EXIT_SUCCESS);
 }
 
