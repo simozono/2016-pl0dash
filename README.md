@@ -8,10 +8,10 @@
 
 ### プログラムの説明
 
-#### 1. [字句解析器](scanner)
+#### 1. [字句解析器(scannerディレクトリ下)](scanner)
   * [「PL/0'」用字句解析器(lex版)](scanner/pl0-scanner.l)
 
-#### 2. [簡単な文法G4](exp-parser)
+#### 2. [簡単な文法G4(exp-parserディレクトリ下)](exp-parser)
 
 第20回授業(後期第05回)p.247 で示した文法に対応する構文解析器等です。
 
@@ -21,7 +21,7 @@
   * [LL(1)構文解析器本体](exp-parser/exp-ll-parser01.c)
   * [サンプルファイル](sample/exp01.txt)
   
-#### 3. [PL/0'用構文解析器 No.1]
+#### 3. PL/0'用構文解析器 No.1(pl0-compilerディレクトリ下)
 * 第20回授業(後期第05回) p. 257のPL/0'構文解析器のプログラム
   * [字句解析用サブルーチン(lex版)](pl0-compiler/pl0-scanner.l)
   * [トークン定義ファイル](scanner/tokentable.h)
@@ -30,4 +30,14 @@
   * [エラー処理関数などのヘッダーファイル](pl0-compiler/misc.h)
   * [PL/0' ソースファイル00(関数あり)](sample/test00.pl0)
   * [PL/0' ソースファイル01(関数なし)](sample/test01.pl0)
+
+### 利用方法
+
+````console
+$ git clone https://github.com/simozono/2016-pl0dash
+$ cd 2016-pl0dash
+$ ls
+README.md  exp-parser/  pl0-compiler/  sample/  scanner/
+$ 
+````
 
