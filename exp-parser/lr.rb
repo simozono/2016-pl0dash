@@ -43,15 +43,13 @@ class LRTable
   end
 
   def action (terminal_symbol, state)
-    if terminal_symbol =~ /^\d+$/ 
-      symbol = 'n'
-    else
-      symbol = terminal_symbol
-    end
+    symbol = terminal_symbol =~ /^\d+$/ ? 'n' : terminal_symbol
     ret = @@action_table[state][symbol]
-    return ret if ret != nil
-    puts "構文エラー"
-    exit
+    if ret == nil
+      puts "構文エラー:action表に存在しない"
+      exit
+    end
+    return ret
   end
 
   def goto (non_terminal_symbol, state)
@@ -98,7 +96,7 @@ loop do # 無限ループ
     stack.push result_state
   when :reduce # reduce 動作
     (left, right) = lr.rule(result_state)
-    (right.size * 2).times{stack.pop} # 不真面目な処理
+    (right.size * 2).times{stack.pop} # 不真面目なreduce処理
     top_state = stack.last
     stack.push left
     stack.push lr.goto(left, top_state)
