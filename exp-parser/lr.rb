@@ -79,7 +79,7 @@ stack = Array.new # スタック
 count = 1         # 処理の行番号
 
 # 最初の処理
-input_array = input.chars # 入力を一文字ずつ分割
+input_array = input.chars.to_a # 入力を一文字ずつ分割
 stack.push 0
 result_print(count, stack, input_array)
 
