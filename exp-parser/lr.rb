@@ -100,6 +100,8 @@ loop do # 無限ループ
       top_state = stack.last
       stack.push left
       stack.push lr.goto(left, top_state)
+    else
+      # type code here
   end
   result_print(count, stack, input_array)
 end

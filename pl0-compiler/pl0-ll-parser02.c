@@ -1,10 +1,9 @@
-/* PL/0' 用 LL(1)再帰下降型構文解析器 No.01
+/* PL/0' 用 LL(1)再帰下降型構文解析器 No.02
  *              2016年後期 鹿児島高専
  *              3年生 言語処理系 授業用
  *   * 構文解析しか行っていない
  *   * ループを使わず再帰のみでやっている
- *   * 変数のIDと関数のIDの分岐をしていないため
- *     関数があると構文エラーとなる
+ *   * 変数のIDと関数のIDの分岐を一応やっている
  *
  */
 
@@ -69,9 +68,9 @@ typedef enum { /* 記号表に登録する名前の種別 */
 } id_type;
 
 struct table_entry { /* 記号表に登録する要素 */
-  id_type type;            /* 種別 */
+  id_type type;               /* 種別 */
   char id_name[MAX_ID_NAME];  /* 名前 */
-  int line_no;             /* 宣言されたソースコード上の行数 */
+  int line_no;                /* 宣言されたソースコード上の行数 */
 };
 
 static struct table_entry symbol_table[MAX_TABLE_SIZE]; /* 記号表 */
@@ -441,9 +440,27 @@ void parse_Term_dash() {
 }
 
 void parse_Factor() {
+  int t_ptr ;
+  struct table_entry t_ent;
+
   printf("Enter Factor\n");
   if (nextToken == T_ID) { 
     /* 右辺値変数 or 関数呼び出しの判断をしなければならない */
+    t_ptr = search_table(yytext); /* T_ID を検索 */
+    if (t_ptr == 0) pl0_error(yytext, line_no, "それない");
+    t_ent = get_table(t_ptr);
+
+    if (t_ent.type == func_id) { /* T_IDが関数名の場合 */
+      nextToken = getToken();
+      if (nextToken != T_LPAR) {
+        pl0_error("", line_no, "( がない");
+      } else {
+	nextToken = getToken();
+	parse_FuncArgList();
+	if (nextToken != T_RPAR) pl0_error("", line_no, ") がない");
+      }
+    } else { /* T_IDが関数名以外の場合 */
+    }
     nextToken = getToken();
   } else if (nextToken == T_NUMBER) { 
     /* ここで数字の処理 */
