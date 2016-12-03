@@ -5,9 +5,10 @@ YACC = bison
 
 EXT_TOKENTABLE = ../scanner/tokentable.h
 
-all: pl0-ll-parser01 pl0-lr-parser01
+all: pl0-ll-parser01 pl0-ll-parser02 pl0-lr-parser01
 clean:
 	rm -f pl0-ll-parser01 pl0-ll-parser01.o
+	rm -f pl0-ll-parser02 pl0-ll-parser02.o
 	rm -f pl0-scanner-ll.c pl0-scanner-ll.o
 	rm -f misc.o
 	rm -f pl0-lr-parser01 pl0-lr-parser01.c pl0-lr-parser01.o
@@ -16,6 +17,8 @@ clean:
 
 pl0-ll-parser01: pl0-ll-parser01.o pl0-scanner-ll.o misc.o
 pl0-ll-parser01.o: pl0-ll-parser01.c misc.h
+pl0-ll-parser02: pl0-ll-parser02.o pl0-scanner-ll.o misc.o
+pl0-ll-parser02.o: pl0-ll-parser02.c misc.h
 
 misc.o: misc.c misc.h
 
