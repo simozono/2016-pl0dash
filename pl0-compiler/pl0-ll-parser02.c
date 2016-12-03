@@ -199,6 +199,7 @@ void parse_ConstIdList_dash() {
     nextToken = getToken();
     if (nextToken != T_NUMBER) pl0_error(yytext, line_no, "数でない");
     /* 定数名の登録および値の設定をここで行う */
+    add_table(const_id, yytext, line_no);
     nextToken = getToken();
     parse_ConstIdList_dash();
   }
@@ -231,6 +232,7 @@ void parse_VarIdList() {
   printf("Enter VarIdList\n");
   if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
   /* 変数名の登録をここで行う */
+  add_table(var_id, yytext, line_no);
   nextToken = getToken();
   parse_VarIdList_dash();
   printf("Exit  VarIdList\n");
@@ -243,6 +245,7 @@ void parse_VarIdList_dash() {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
     /* 変数名の登録をここで行う */
+    add_table(var_id, yytext, line_no);
     nextToken = getToken();
     parse_VarIdList_dash();
   }
@@ -265,6 +268,7 @@ void parse_FuncDecl() {
   /* T_FUNC では何もしない。次のトークンを読む */
   nextToken = getToken();
   if (nextToken != T_ID) pl0_error(yytext, line_no, "関数名でない");
+  add_table(func_id, yytext, line_no);
   nextToken = getToken();
   if (nextToken != T_LPAR) pl0_error(yytext, line_no, "(でない");
   nextToken = getToken();
