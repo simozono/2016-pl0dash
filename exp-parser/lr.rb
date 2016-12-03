@@ -38,7 +38,7 @@ class LRTable
   @@rule_table[4] = {'T' => "F"}
   @@rule_table[5] = {'F' => "(E)"}
   @@rule_table[6] = {'F' => "n"}
-  
+
   def initialize
   end
 
@@ -74,9 +74,9 @@ print "文法G5で受理できる式を入力してください: "
 input = gets.chomp + '$'
 # input = "n*(n+n)$"
 
-lr = LRTable.new  # 
+lr = LRTable.new #
 stack = Array.new # スタック
-count = 1         # 処理の行番号
+count = 1 # 処理の行番号
 
 # 最初の処理
 input_array = input.chars.to_a # 入力を一文字ずつ分割
@@ -88,18 +88,18 @@ loop do # 無限ループ
   count += 1
   (result_act, result_state) = lr.action(input_array.first, stack.last)
   case result_act
-  when :acc # acc に到達したら終了
-    result_print(count, "accになったので終了",nil)
-    break
-  when :shift # shift 動作
-    stack.push input_array.shift
-    stack.push result_state
-  when :reduce # reduce 動作
-    (left, right) = lr.rule(result_state)
-    (right.size * 2).times{stack.pop} # 不真面目なreduce処理
-    top_state = stack.last
-    stack.push left
-    stack.push lr.goto(left, top_state)
+    when :acc # acc に到達したら終了
+      result_print(count, "accになったので終了", nil)
+      break
+    when :shift # shift 動作
+      stack.push input_array.shift
+      stack.push result_state
+    when :reduce # reduce 動作
+      (left, right) = lr.rule(result_state)
+      (right.size * 2).times { stack.pop } # 不真面目なreduce処理
+      top_state = stack.last
+      stack.push left
+      stack.push lr.goto(left, top_state)
   end
   result_print(count, stack, input_array)
 end
