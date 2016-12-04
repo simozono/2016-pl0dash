@@ -65,6 +65,7 @@ typedef enum { /* 記号表に登録する名前の種別 */
   const_id,  /* 定数 */
   var_id,    /* 変数 */
   func_id,   /* 関数 */
+  param_id   /* 関数の仮引数 */
 } id_type;
 
 struct table_entry { /* 記号表に登録する要素 */
@@ -292,8 +293,11 @@ void parse_FuncDecl() {
 
 void parse_FuncDeclIdList() {
   /* <FuncDeclIdList> -> T_ID <FuncDeclIdList_dash> | ε */
+  char id_name[MAX_ID_NAME];
   printf("Enter FuncDeclIdList\n");
   if (nextToken == T_ID) {
+    strcpy(id_name, yytext);
+    add_table(param_id, id_name, line_no);
     nextToken = getToken();
     parse_FuncDeclIdList_dash();
   }
@@ -302,10 +306,13 @@ void parse_FuncDeclIdList() {
 
 void parse_FuncDeclIdList_dash() {
   /* <FuncDeclIdList_dash> -> T_COMMA T_ID <FuncDeclIdList_dash> | ε */
+  char id_name[MAX_ID_NAME];
   printf("Enter FuncDeclIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "仮引数名でない");
+    strcpy(id_name, yytext);
+    add_table(param_id, id_name, line_no);
     nextToken = getToken();
     parse_FuncDeclIdList_dash();
   }
