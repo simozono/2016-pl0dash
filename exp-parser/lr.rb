@@ -32,12 +32,12 @@ class LRTable
 
   # 生成規則をクラス変数として定義
   @@rule_table = Array.new
-  @@rule_table[1] = {'E' => "E+T"}
-  @@rule_table[2] = {'E' => "T"}
-  @@rule_table[3] = {'T' => "T*F"}
-  @@rule_table[4] = {'T' => "F"}
-  @@rule_table[5] = {'F' => "(E)"}
-  @@rule_table[6] = {'F' => "n"}
+  @@rule_table[1] = {'E' => 'E+T'}
+  @@rule_table[2] = {'E' => 'T'}
+  @@rule_table[3] = {'T' => 'T*F'}
+  @@rule_table[4] = {'T' => 'F'}
+  @@rule_table[5] = {'F' => '(E)'}
+  @@rule_table[6] = {'F' => 'n'}
 
   def initialize
   end
@@ -46,18 +46,18 @@ class LRTable
     symbol = terminal_symbol =~ /^\d+$/ ? 'n' : terminal_symbol
     ret = @@action_table[state][symbol]
     if ret == nil
-      puts "構文エラー:action表に存在しない"
+      puts '構文エラー:action表に存在しない'
       exit
     end
-    return ret
+    ret
   end
 
   def goto (non_terminal_symbol, state)
-    return @@goto_table[state][non_terminal_symbol]
+    @@goto_table[state][non_terminal_symbol]
   end
 
   def rule (number)
-    return @@rule_table[number].to_a.first
+    @@rule_table[number].to_a.first
   end
 end
 
@@ -70,7 +70,7 @@ def result_print (line, stack, input) # きれいに表示させるためのメ�
 end
 
 # 解析する元の文字列(入力行)
-print "文法G5で受理できる式を入力してください: "
+print '文法G5で受理できる式を入力してください: '
 input = gets.chomp + '$'
 # input = "n*(n+n)$"
 
@@ -89,7 +89,7 @@ loop do # 無限ループ
   (result_act, result_state) = lr.action(input_array.first, stack.last)
   case result_act
     when :acc # acc に到達したら終了
-      result_print(count, "accになったので終了", nil)
+      result_print(count, 'accになったので終了', nil)
       break
     when :shift # shift 動作
       stack.push input_array.shift
