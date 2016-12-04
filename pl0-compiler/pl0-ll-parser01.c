@@ -238,6 +238,7 @@ void parse_FuncDeclIdList_dash() {
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "仮引数名でない");
+    nextToken = getToken();
     parse_FuncDeclIdList_dash();
   }
   printf("Exit  FuncDeclIdList_dash\n");

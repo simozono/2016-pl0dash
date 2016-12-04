@@ -174,14 +174,16 @@ void parse_ConstDecl() {
 
 void parse_ConstIdList() {
   /* <ConstIdList> -> T_ID T_EQ T_NUMBER <ConstIdList_dash> */
+  char id_name[MAX_ID_NAME];
   printf("Enter ConstIdList\n");
   if (nextToken != T_ID) pl0_error(yytext, line_no, "定数名でない");
+  strcpy(id_name, yytext);
   nextToken = getToken();
   if (nextToken != T_EQ) pl0_error(yytext, line_no, "=でない");
   nextToken = getToken();
   if (nextToken != T_NUMBER) pl0_error(yytext, line_no, "数でない");
   /* 定数名の登録および値の設定をここで行う */
-  add_table(const_id, yytext, line_no);
+  add_table(const_id, id_name, line_no);
   nextToken = getToken();
   parse_ConstIdList_dash();
   printf("Exit  ConstIdList\n");
@@ -189,16 +191,18 @@ void parse_ConstIdList() {
 
 void parse_ConstIdList_dash() {
   /* <ConstIdList_dash> -> T_COMMA T_ID T_EQ T_NUMBER <ConstIdList_dash> | ε */
+  char id_name[MAX_ID_NAME];
   printf("Enter ConstIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "定数名でない");
+    strcpy(id_name, yytext);
     nextToken = getToken();
     if (nextToken != T_EQ) pl0_error(yytext, line_no, "=でない");
     nextToken = getToken();
     if (nextToken != T_NUMBER) pl0_error(yytext, line_no, "数でない");
     /* 定数名の登録および値の設定をここで行う */
-    add_table(const_id, yytext, line_no);
+    add_table(const_id, id_name, line_no);
     nextToken = getToken();
     parse_ConstIdList_dash();
   }
@@ -228,10 +232,12 @@ void parse_VarDecl() {
 
 void parse_VarIdList() {
   /* <VarIdList_dash> -> T_ID <VarIdList_dash> */
+  char id_name[MAX_ID_NAME];
   printf("Enter VarIdList\n");
   if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
   /* 変数名の登録をここで行う */
-  add_table(var_id, yytext, line_no);
+  strcpy(id_name, yytext);
+  add_table(var_id, id_name, line_no);
   nextToken = getToken();
   parse_VarIdList_dash();
   printf("Exit  VarIdList\n");
@@ -239,12 +245,14 @@ void parse_VarIdList() {
 
 void parse_VarIdList_dash() {
   /* <VarIdList_dash> -> T_COMMA T_ID <VarIdList_dash> | ε */
+  char id_name[MAX_ID_NAME];
   printf("Enter VarIdList_dash\n");
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
     /* 変数名の登録をここで行う */
-    add_table(var_id, yytext, line_no);
+    strcpy(id_name, yytext);
+    add_table(var_id, id_name, line_no);
     nextToken = getToken();
     parse_VarIdList_dash();
   }
@@ -263,11 +271,13 @@ void parse_FuncDeclList() {
 
 void parse_FuncDecl() {
   /* <FuncDecl> -> T_FUNC T_ID T_LPAR <FuncDeclIdList> T_RPAR <Block> T_SEMIC */
+  char id_name[MAX_ID_NAME];
   printf("Enter FuncDecl\n");
   /* T_FUNC では何もしない。次のトークンを読む */
   nextToken = getToken();
   if (nextToken != T_ID) pl0_error(yytext, line_no, "関数名でない");
-  add_table(func_id, yytext, line_no);
+  strcpy(id_name, yytext);
+  add_table(func_id, id_name, line_no);
   nextToken = getToken();
   if (nextToken != T_LPAR) pl0_error(yytext, line_no, "(でない");
   nextToken = getToken();
@@ -296,6 +306,7 @@ void parse_FuncDeclIdList_dash() {
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "仮引数名でない");
+    nextToken = getToken();
     parse_FuncDeclIdList_dash();
   }
   printf("Exit  FuncDeclIdList_dash\n");
@@ -447,7 +458,7 @@ void parse_Factor() {
   if (nextToken == T_ID) { 
     /* 右辺値変数 or 関数呼び出しの判断をしなければならない */
     t_ptr = search_table(yytext); /* T_ID を検索 */
-    if (t_ptr == 0) pl0_error(yytext, line_no, "それない");
+    if (t_ptr == 0) pl0_error(yytext, line_no, "その変数/定数/関数はない");
     t_ent = get_table(t_ptr);
 
     if (t_ent.type == func_id) { /* T_IDが関数名の場合 */
