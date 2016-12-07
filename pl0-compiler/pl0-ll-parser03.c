@@ -213,7 +213,7 @@ void parse_FuncDeclList() {
 void parse_FuncDecl() {
   /* <FuncDecl> -> T_FUNC T_ID T_LPAR <FuncDeclIdList> T_RPAR <Block> T_SEMIC */
   char func_name[MAX_ID_NAME];
-  int func_ptr;
+  int func_ptr; /* 現在処理している関数の記号表での位置 */
   
   /* T_FUNC では何もしない。次のトークンを読む */
   nextToken = getToken();
