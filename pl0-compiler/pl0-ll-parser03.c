@@ -222,12 +222,14 @@ void parse_FuncDecl() {
   func_ptr = reg_func_in_tbl(func_name, line_no);
   nextToken = getToken();
   if (nextToken != T_LPAR) pl0_error(yytext, line_no, "(でない");
+  blocklevel_up(); /* ブロックレベルを上げる */
   nextToken = getToken();
   parse_FuncDeclIdList(func_ptr);
   if (nextToken != T_RPAR) pl0_error(yytext, line_no, ")でない");
   nextToken = getToken();
   parse_Block();
   if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
+  blocklevel_down(); /* ブロックレベルを下げる */
   nextToken = getToken();
 }
 
@@ -262,7 +264,19 @@ void parse_FuncDeclIdList_dash(int func_ptr) {
 }
 
 void parse_Statement() {
+  struct table_entry t_ent;
+  char id_name[MAX_ID_NAME];
+  int t_ptr;
+
   if (nextToken == T_ID) { /* 代入文 */
+    strcpy(id_name, yytext);
+    t_ptr = search_table(id_name); /* T_ID を検索 */
+    if (t_ptr == 0) pl0_error(id_name, line_no, "その変数/仮引数はない");
+    t_ent = get_table(t_ptr);
+    if (t_ent.type != var_id && t_ent.type != param_id) {
+      pl0_error(id_name, line_no, "それは変数/仮引数ではない");
+    }
+    reference_info(id_name, line_no, t_ent.type, t_ent.line_no);
     nextToken = getToken();
     if (nextToken != T_COLEQ) pl0_error(yytext, line_no, ":=がない");
     nextToken = getToken();
@@ -402,6 +416,7 @@ void parse_Factor() {
     t_ent = get_table(t_ptr);
 
     if (t_ent.type == func_id) { /* T_IDが関数名の場合 */
+      reference_info(id_name, line_no, t_ent.type, t_ent.line_no);
       nextToken = getToken();
       if (nextToken != T_LPAR) {
         pl0_error("", line_no, "( がない");
@@ -413,6 +428,7 @@ void parse_Factor() {
 	if (nextToken != T_RPAR) pl0_error("", line_no, ") がない");
       }
     } else { /* T_IDが関数名以外の場合 */
+      reference_info(id_name, line_no, t_ent.type, t_ent.line_no);
     }
     nextToken = getToken();
   } else if (nextToken == T_NUMBER) { 
