@@ -47,8 +47,8 @@ void parse_Expression_dash(void);
 void parse_Term(void);
 void parse_Term_dash(void);
 void parse_Factor(void);
-void parse_FuncArgList(void);
-void parse_FuncArgList_dash(void);
+int parse_FuncArgList(int n_args);
+int parse_FuncArgList_dash(int n_args);
 
 int nextToken; /* 次のトークンが入る変数 */
 
@@ -389,7 +389,8 @@ void parse_Term_dash() {
 }
 
 void parse_Factor() {
-  int t_ptr ;
+  int t_ptr;
+  int n_args = 0; /* 引数のカウント */
   struct table_entry t_ent;
   char id_name[MAX_ID_NAME];
   
@@ -406,7 +407,9 @@ void parse_Factor() {
         pl0_error("", line_no, "( がない");
       } else {
 	nextToken = getToken();
-	parse_FuncArgList();
+	n_args = parse_FuncArgList(n_args);
+	if (t_ent.data.func.n_params != n_args) pl0_error(t_ent.id_name,
+							  line_no, "関数の引数の数が違います");
 	if (nextToken != T_RPAR) pl0_error("", line_no, ") がない");
       }
     } else { /* T_IDが関数名以外の場合 */
@@ -425,23 +428,30 @@ void parse_Factor() {
   }
 }
 
-void parse_FuncArgList() {
+int parse_FuncArgList(int n_args) {
   /* <FuncArgList> -> <Expression> <FuncArgList_dash> | ε */
   if (nextToken == T_PLUS || nextToken == T_MINUS
       || nextToken == T_ID || nextToken == T_NUMBER
       || nextToken == T_LPAR) { /* First(<Expression>)に含まれるもの */
     parse_Expression();
-    parse_FuncArgList_dash();
+    n_args++;
+    n_args = parse_FuncArgList_dash(n_args);
+  } else {
+    /* ε  引数なし */
   }
+  return n_args;
 }
 
-void parse_FuncArgList_dash() {
+int parse_FuncArgList_dash(int n_args) {
   /* <FuncArgList_dash> -> T_COMMA <Expression> <FuncArgList_dash> | ε */
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     parse_Expression();
-    parse_FuncArgList_dash();
+    n_args++;
+    n_args = parse_FuncArgList_dash(n_args);
   } else {
     /* ε */
   }
+
+  return n_args;
 }
