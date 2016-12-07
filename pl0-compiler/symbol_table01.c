@@ -1,3 +1,7 @@
+/* pl0-ll-parser03 用記号表完成バージョン
+ *
+ */
+
 #include <string.h>
 #include "misc.h"
 #include "symbol_table01.h"

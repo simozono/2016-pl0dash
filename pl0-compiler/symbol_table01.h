@@ -24,8 +24,8 @@ struct table_entry { /* 記号表に登録する要素 */
 };
 
 extern struct table_entry get_table(int ptr);
-
 extern int search_table(char *id_name);
+
 extern int reg_const_in_tbl(char *id_name, int line_no, int t_num_value);
 extern int reg_var_in_tbl(char *id_name, int line_no);
 extern int reg_func_in_tbl(char *id_name, int line_no);
