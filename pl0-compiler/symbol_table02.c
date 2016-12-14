@@ -12,6 +12,8 @@
 static struct table_entry symbol_table[MAX_TABLE_SIZE]; /* 記号表 */
 static int symbol_table_ptr = 0; /* 記号表の現在位置を示すポインタ */
 
+static int heap_address = 800; /* 大域変数(ブロック0)用ヒープアドレス */
+
 static int stack_for_symbol_table[MAX_STACK_SIZE]; /* 意味解析用 ptr を覚えておく */
 static int stack_ptr = 0; /* 上記スタックの現在位置を示すポインタ */
 
@@ -93,6 +95,11 @@ int reg_const_in_tbl(char *id_name, int line_no, int t_num_value) {
 int reg_var_in_tbl(char *id_name, int line_no) {
   int t_ptr ;
   t_ptr = add_table(var_id, id_name, line_no);
+  if (stack_ptr < 1) { /* ブロックレベル0 */
+    symbol_table[t_ptr].data.address = heap_address;
+    heap_address++;
+  } else { /* ブロックレベル1以上 */
+  }
   return t_ptr;
 }
 
