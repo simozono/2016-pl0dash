@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #include "misc.h"
 #include "../scanner/tokentable.h"
 #include "symbol_table02.h"
+#include "codegen.h"
 
 extern FILE *yyin;   /* 読み込むソースファイル */
 extern int yylex();  /* lex の字句解析 */
@@ -59,15 +61,52 @@ int getToken(void) { /* トークンを取得する関数 */
 }
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    printf ("ソースプログラムのファイル名のみ指定してください\n");
+
+  int opts;
+  int n_flg = 0;
+  int o_flg = 0;
+  FILE *out_fp;
+
+  char out_filename[FILENAME_MAX];
+
+  while ((opts = getopt(argc, argv, "hno:")) != -1) {
+    switch (opts) {
+    case 'h':
+      fprintf(stderr, "%s [-h] [-n] [-o output_file] source_file\n",
+	      argv[0]);
+      exit(EXIT_SUCCESS);
+      break;
+    case 'n':
+      n_flg = 1;
+      break;
+    case 'o':
+      o_flg = 1;
+      strcpy(out_filename, optarg);
+      break;
+    case '?':
+      exit(EXIT_FAILURE);
+      break;
+    }
+  }
+  
+  if (optind >= argc) {
+    fprintf(stderr, "ソースプログラムのファイル名を指定してください\n");
     exit(EXIT_FAILURE);
   }
 
-  yyin = fopen(argv[1], "r");
+  yyin = fopen(argv[optind], "r");
   if (yyin  == NULL) {
-    printf ("%s というファイルがない\n", argv[1]);
+    fprintf(stderr, "%s というファイルがありません\n", argv[optind]);
     exit(EXIT_FAILURE);
+  }
+
+  out_fp = stdout;
+  if (o_flg) {
+    if ((out_fp = fopen(out_filename, "w")) == NULL) {
+      fprintf(stderr, "%s という出力ファイルを作成できません\n",
+	      out_filename);
+      exit(EXIT_FAILURE);
+    }
   }
 
   /* 構文解析スタート */
@@ -75,8 +114,10 @@ int main(int argc, char *argv[]) {
   parse_Program();
   if (nextToken != T_EOF) pl0_error("",line_no, "EOFでない");
 
-  /* 正常終了 */
-  printf("構文解析は全て成功\n");
+  gencode_no_arg(end);
+
+  /* 生成コード出力 */
+  list_code(out_fp, n_flg);
   exit(EXIT_SUCCESS);
 }
 
@@ -275,7 +316,6 @@ void parse_Statement() {
     if (t_ent.type != var_id && t_ent.type != param_id) {
       pl0_error(id_name, line_no, "それは変数/仮引数ではない");
     }
-    reference_info(id_name, line_no, t_ent.type, t_ent.line_no);
     nextToken = getToken();
     if (nextToken != T_COLEQ) pl0_error(yytext, line_no, ":=がない");
     nextToken = getToken();
@@ -415,7 +455,6 @@ void parse_Factor() {
     t_ent = get_table(t_ptr);
 
     if (t_ent.type == func_id) { /* T_IDが関数名の場合 */
-      reference_info(id_name, line_no, t_ent.type, t_ent.line_no);
       nextToken = getToken();
       if (nextToken != T_LPAR) {
         pl0_error("", line_no, "( がない");
@@ -441,6 +480,7 @@ void parse_Factor() {
   } else {
     pl0_error(yytext, line_no, "式がおかしい");
   }
+
 }
 
 int parse_FuncArgList(int n_args) {

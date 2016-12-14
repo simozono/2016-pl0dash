@@ -38,9 +38,20 @@ int search_table(char *id_name) {
   return i; /* 0 だったら登録されていない。1以上は記号表の位置 */
 }
 
-/* 記号表の ptr 位置の情報を得る */
+/* 記号表の ptr 位置の物の情報を得る */
 struct table_entry get_table(int ptr) {
   return symbol_table[ptr];
+}
+
+/* 記号表 ptr 位置の物のアドレスを返す */
+int get_symbol_address(int ptr) {
+  int address;
+  if (symbol_table[ptr].type != func_id) {
+    address = symbol_table[ptr].data.address;
+  } else {
+    address = symbol_table[ptr].data.func.address;
+  }
+  return address;
 }
 
 /* 定数名/変数名/関数名/仮引数を記号表に登録する低レベル関数 */
