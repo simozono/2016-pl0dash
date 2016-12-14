@@ -18,13 +18,15 @@ typedef struct {
 
 static Asm_Code code[MAX_CODE];
 
+/* コード生成関数 */
 int gencode_no_arg(Opr o); /* 引数なし */
 int gencode_arg_ST(Opr o, int ptr); /* 引数として記号表番号 */
 int gencode_arg_V(Opr o, int value); /* 引数として値そのもの */
 int gencode_arg_V_ST(Opr o, int value, int ptr); /* 引数として値と記号表番号 */
-int next_code();
-void list_code(FILE *fp, int n_flag);
-void backpatch(int code_lineno);
+
+int next_code(); /* 次の命令が入る番地を求める */
+void list_code(FILE *fp, int n_flag); /* コードの出力 */
+void backpatch(int code_lineno); /* バックパッチ用 */
   
 /* 以下は本ファイルでのみ使用 */
 int add_code(char *opline);
@@ -42,9 +44,9 @@ void list_code(FILE *fp, int n_flag){ /* リストを出力 */
 	fprintf(fp,"%4d %s\n", i, code[i].op_line);
     else
       if (!n_flag)
-	fprintf(fp,"%s%d\n", code[i].op_line,code[i].address);
+	fprintf(fp,"%s%d\n", code[i].op_line, code[i].address);
       else
-	fprintf(fp,"%4d %s%d\n", i, code[i].op_line,code[i].address);
+	fprintf(fp,"%4d %s%d\n", i, code[i].op_line, code[i].address);
     i++;
   }
 }
@@ -189,14 +191,14 @@ int gencode_arg_ST(Opr o, int ptr) {
 int add_code(char *opline) {
   code_ptr++;
   strcpy(code[code_ptr].op_line, opline);
-  code[code_ptr].address = -1; /* address を使用しない */
+  code[code_ptr].address = -1; /* addressは使用しない */
   return code_ptr;
 }
 
 int add_code_val(char *fmt, int value) {
   code_ptr++;
   sprintf(code[code_ptr].op_line, fmt, value);
-  code[code_ptr].address = -1; /* address を使用しない */
+  code[code_ptr].address = -1; /* addressは使用しない */
   return code_ptr;
 }
 
@@ -211,7 +213,7 @@ int add_code_sharpval(char *fmt, int value) {
     sprintf(str_val, "%d", value);
   }
   sprintf(code[code_ptr].op_line, fmt, str_val);
-  code[code_ptr].address = -1; /* address を使用しない */
+  code[code_ptr].address = -1; /* addressは使用しない */
   return code_ptr;
 }
 

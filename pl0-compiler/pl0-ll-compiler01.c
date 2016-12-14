@@ -1,9 +1,7 @@
 /* PL/0' 用 LL(1)再帰下降型コンパイラ No.01
  *              2016年後期 鹿児島高専
  *              3年生 言語処理系 授業用
- *   * ループを使わず再帰のみでやっている
- *   * 記号表完成
- *
+ *   * 関数関連のコード生成未対応
  */
 
 #include <stdio.h>
@@ -39,6 +37,7 @@ void parse_FuncDeclList(void);
 void parse_FuncDecl(void);
 void parse_FuncDeclIdList(int func_ptr);
 void parse_FuncDeclIdList_dash(int func_ptr);
+void parse_FuncBlock(void);
 void parse_Statement(void);
 void parse_StatementList(void);
 void parse_StatementList_dash(void);
@@ -56,7 +55,8 @@ int nextToken; /* 次のトークンが入る変数 */
 int getToken(void) { /* トークンを取得する関数 */
   int token = yylex();
   /* yylex()が0を返す時がEOFのようだ */
-  if (token == 0) token = T_EOF;
+  if (token == 0)
+    token = T_EOF;
   return token;
 }
 
@@ -112,8 +112,8 @@ int main(int argc, char *argv[]) {
   /* 構文解析スタート */
   nextToken = getToken();
   parse_Program();
-  if (nextToken != T_EOF) pl0_error("",line_no, "EOFでない");
-
+  if (nextToken != T_EOF)
+    pl0_error("",line_no, "EOFでない");
   gencode_no_arg(end);
 
   /* 生成コード出力 */
@@ -124,7 +124,8 @@ int main(int argc, char *argv[]) {
 void parse_Program() {
   /* <Program> -> <Block> T_PRIOD */ 
   parse_Block();
-  if (nextToken != T_PERIOD) pl0_error(yytext, line_no, "ピリオドでない");
+  if (nextToken != T_PERIOD)
+    pl0_error(yytext, line_no, "ピリオドでない");
   nextToken = getToken();
 }
 
@@ -151,7 +152,8 @@ void parse_ConstDecl() {
   /* T_CONST では何もしない。次のトークンを読む */
   nextToken = getToken();
   parse_ConstIdList();
-  if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
+  if (nextToken != T_SEMIC)
+    pl0_error(yytext, line_no, ";でない");
   nextToken = getToken();
 }
 
@@ -159,12 +161,15 @@ void parse_ConstIdList() {
   /* <ConstIdList> -> T_ID T_EQ T_NUMBER <ConstIdList_dash> */
   char const_name[MAX_ID_NAME];
 
-  if (nextToken != T_ID) pl0_error(yytext, line_no, "定数名でない");
+  if (nextToken != T_ID)
+    pl0_error(yytext, line_no, "定数名でない");
   strcpy(const_name, yytext);
   nextToken = getToken();
-  if (nextToken != T_EQ) pl0_error(yytext, line_no, "=でない");
+  if (nextToken != T_EQ)
+    pl0_error(yytext, line_no, "=でない");
   nextToken = getToken();
-  if (nextToken != T_NUMBER) pl0_error(yytext, line_no, "数でない");
+  if (nextToken != T_NUMBER)
+    pl0_error(yytext, line_no, "数でない");
   /* 定数名の登録および値の設定 */
   reg_const_in_tbl(const_name, line_no, t_num_value);
   nextToken = getToken();
@@ -177,13 +182,16 @@ void parse_ConstIdList_dash() {
 
   if (nextToken == T_COMMA) {
     nextToken = getToken();
-    if (nextToken != T_ID) pl0_error(yytext, line_no, "定数名でない");
+    if (nextToken != T_ID)
+      pl0_error(yytext, line_no, "定数名でない");
     strcpy(const_name, yytext);
     nextToken = getToken();
-    if (nextToken != T_EQ) pl0_error(yytext, line_no, "=でない");
+    if (nextToken != T_EQ)
+      pl0_error(yytext, line_no, "=でない");
     nextToken = getToken();
-    if (nextToken != T_NUMBER) pl0_error(yytext, line_no, "数でない");
-    /* 定数名の登録および値の設定をここで行う */
+    if (nextToken != T_NUMBER)
+      pl0_error(yytext, line_no, "数でない");
+    /* 定数名の登録および値の設定 */
     reg_const_in_tbl(const_name, line_no, t_num_value);
     nextToken = getToken();
     parse_ConstIdList_dash();
@@ -207,7 +215,8 @@ void parse_VarDecl() {
   /* T_VAR では何もしない。次のトークンを読む */
   nextToken = getToken();
   parse_VarIdList();
-  if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
+  if (nextToken != T_SEMIC)
+    pl0_error(yytext, line_no, ";でない");
   nextToken = getToken();
 }
 
@@ -215,7 +224,8 @@ void parse_VarIdList() {
   /* <VarIdList_dash> -> T_ID <VarIdList_dash> */
   char var_name[MAX_ID_NAME];
 
-  if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
+  if (nextToken != T_ID)
+    pl0_error(yytext, line_no, "変数名でない");
   /* 変数名の登録 */
   strcpy(var_name, yytext);
   reg_var_in_tbl(var_name, line_no);
@@ -229,7 +239,8 @@ void parse_VarIdList_dash() {
 
   if (nextToken == T_COMMA) {
     nextToken = getToken();
-    if (nextToken != T_ID) pl0_error(yytext, line_no, "変数名でない");
+    if (nextToken != T_ID)
+      pl0_error(yytext, line_no, "変数名でない");
     /* 変数名の登録 */
     strcpy(var_name, yytext);
     reg_var_in_tbl(var_name, line_no);
@@ -257,22 +268,25 @@ void parse_FuncDecl() {
   
   /* T_FUNC では何もしない。次のトークンを読む */
   nextToken = getToken();
-  if (nextToken != T_ID) pl0_error(yytext, line_no, "関数名でない");
+  if (nextToken != T_ID)
+    pl0_error(yytext, line_no, "関数名でない");
   /* 関数名の登録 */
   strcpy(func_name, yytext);
   func_ptr = reg_func_in_tbl(func_name, line_no);
 
   nextToken = getToken();
-  if (nextToken != T_LPAR) pl0_error(yytext, line_no, "(でない");
+  if (nextToken != T_LPAR)
+    pl0_error(yytext, line_no, "(でない");
   blocklevel_up(); /* ブロックレベルを上げる */
   nextToken = getToken();
   parse_FuncDeclIdList(func_ptr);
-  if (nextToken != T_RPAR) pl0_error(yytext, line_no, ")でない");
+  if (nextToken != T_RPAR)
+    pl0_error(yytext, line_no, ")でない");
   nextToken = getToken();
-  parse_Block();
-  if (nextToken != T_SEMIC) pl0_error(yytext, line_no, ";でない");
+  parse_FuncBlock();
+  if (nextToken != T_SEMIC)
+    pl0_error(yytext, line_no, ";でない");
   blocklevel_down(); /* ブロックレベルを下げる */
-
   nextToken = getToken();
 }
 
@@ -281,6 +295,7 @@ void parse_FuncDeclIdList(int func_ptr) {
   char param_name[MAX_ID_NAME];
 
   if (nextToken == T_ID) {
+    /* 仮引数の登録 */
     strcpy(param_name, yytext);
     reg_param_in_tbl(param_name, line_no, func_ptr);
     nextToken = getToken();
@@ -297,6 +312,7 @@ void parse_FuncDeclIdList_dash(int func_ptr) {
   if (nextToken == T_COMMA) {
     nextToken = getToken();
     if (nextToken != T_ID) pl0_error(yytext, line_no, "仮引数名でない");
+    /* 仮引数の登録 */
     strcpy(param_name, yytext);
     reg_param_in_tbl(param_name, line_no, func_ptr);
     nextToken = getToken();
@@ -306,12 +322,20 @@ void parse_FuncDeclIdList_dash(int func_ptr) {
   }
 }
 
+void parse_FuncBlock() {
+  /* <FuncBlock> -> <ConstDeclList> <VarDeclList>  <Statement> */
+  parse_ConstDeclList();
+  parse_VarDeclList();
+  parse_Statement();
+}
+
+
 void parse_Statement() {
   struct table_entry t_ent;
   char id_name[MAX_ID_NAME];
   int t_ptr;
 
-  int backpatch_if ; /* IF文用バックパッチ */
+  int backpatch_if ;     /* IF文用バックパッチ */
   int backpatch_while1 ; /* while文用バックパッチ1 */
   int backpatch_while2 ; /* while文用バックパッチ2 */
 
@@ -319,11 +343,11 @@ void parse_Statement() {
   case T_ID: /* 代入文 */
     strcpy(id_name, yytext);
     t_ptr = search_table(id_name); /* T_ID を検索 */
-    if (t_ptr == 0) pl0_error(id_name, line_no, "その変数/仮引数はない");
+    if (t_ptr == 0)
+      pl0_error(id_name, line_no, "その変数/仮引数はない");
     t_ent = get_table(t_ptr);
-    if (t_ent.type != var_id && t_ent.type != param_id) {
+    if (t_ent.type != var_id && t_ent.type != param_id)
       pl0_error(id_name, line_no, "それは変数/仮引数ではない");
-    }
     nextToken = getToken();
     if (nextToken != T_COLEQ) pl0_error(yytext, line_no, ":=がない");
     nextToken = getToken();
@@ -334,14 +358,16 @@ void parse_Statement() {
   case T_BEGIN: /* begn ～ end */
     nextToken = getToken();
     parse_StatementList();
-    if (nextToken != T_END) pl0_error(yytext, line_no, "endがない");
+    if (nextToken != T_END)
+      pl0_error(yytext, line_no, "endがない");
     nextToken = getToken();
     break;
   case T_IF: /* if then */
     nextToken = getToken();
     parse_Condition();
     backpatch_if = gencode_arg_V(jpc, 0); /* 偽の場合の飛び先を仮に0とおく */
-    if (nextToken != T_THEN) pl0_error(yytext, line_no, "thenがない");
+    if (nextToken != T_THEN)
+      pl0_error(yytext, line_no, "thenがない");
     nextToken = getToken();
     parse_Statement();
     backpatch(backpatch_if);  /* jpc 0 をここで backpatch */
@@ -350,7 +376,8 @@ void parse_Statement() {
     nextToken = getToken();
     backpatch_while1 = next_code(); /* while の条件先頭 */
     parse_Condition();
-    if (nextToken != T_DO) pl0_error(yytext, line_no, "doがない");
+    if (nextToken != T_DO)
+      pl0_error(yytext, line_no, "doがない");
     backpatch_while2 = gencode_arg_V(jpc, 0); /* 偽の場合のとび先を仮に0とおく */
     nextToken = getToken();
     parse_Statement();
@@ -463,16 +490,15 @@ void parse_Expression_dash() {
   if (nextToken == T_PLUS) {
     nextToken = getToken();
     parse_Term();
-    /* ここで + の処理 */
-    gencode_no_arg(pls);
+    gencode_no_arg(pls); /* 足し算コード生成 */
     parse_Expression_dash();
   } else if (nextToken == T_MINUS) {
     nextToken = getToken();
     parse_Term();
-    /* ここで - の処理 */
-    gencode_no_arg(min);
+    gencode_no_arg(min); /* 引き算コード生成 */
     parse_Expression_dash();
   } else {
+    /* ε */
   }
 }
 
@@ -485,14 +511,12 @@ void parse_Term_dash() {
   if (nextToken == T_MULTI) {
     nextToken = getToken();
     parse_Factor();
-    /* ここで * の処理 */
-    gencode_no_arg(mul);
+    gencode_no_arg(mul); /* 掛け算コード生成 */
     parse_Term_dash();
   } else if (nextToken == T_DIVIDE) {
     nextToken = getToken();
     parse_Factor();
-    /* ここで / の処理 */
-    gencode_no_arg(divi);
+    gencode_no_arg(divi); /* 割り算コード生成 */
     parse_Term_dash();
   } else {
     /* ε */
@@ -501,16 +525,16 @@ void parse_Term_dash() {
 
 void parse_Factor() {
   int t_ptr;
-  int n_args = 0; /* 引数のカウント */
+  int n_args = 0; /* 引数のカウント用 */
   struct table_entry t_ent;
   char id_name[MAX_ID_NAME];
   
   switch(nextToken) {
   case T_ID:
-    /* 右辺値変数 or 関数呼び出しの判断をしなければならない */
     strcpy(id_name, yytext);
     t_ptr = search_table(id_name); /* T_ID を検索 */
-    if (t_ptr == 0) pl0_error(id_name, line_no, "その変数/定数/関数はない");
+    if (t_ptr == 0)
+      pl0_error(id_name, line_no, "その変数/定数/関数はない");
     t_ent = get_table(t_ptr);
 
     switch(t_ent.type) {
@@ -521,9 +545,10 @@ void parse_Factor() {
       } else {
 	nextToken = getToken();
 	n_args = parse_FuncArgList(n_args);
-	if (t_ent.data.func.n_params != n_args) pl0_error(t_ent.id_name,
-							  line_no, "関数の引数の数が違います");
-	if (nextToken != T_RPAR) pl0_error("", line_no, ") がない");
+	if (t_ent.data.func.n_params != n_args)
+	  pl0_error(t_ent.id_name, line_no, "関数の引数の数が違います");
+	if (nextToken != T_RPAR)
+	  pl0_error("", line_no, ") がない");
       }
       break;
     case const_id: /* 定数の場合 */
@@ -535,15 +560,15 @@ void parse_Factor() {
     }
     nextToken = getToken();
     break;
-  case T_NUMBER:
-    /* ここで数字の処理 */
+  case T_NUMBER: /* 数字のの場合 */
     gencode_arg_V(lod, t_num_value);
     nextToken = getToken();
     break;
   case T_LPAR:
     nextToken = getToken();
     parse_Expression();
-    if (nextToken != T_RPAR) pl0_error(yytext, line_no, ")がない");
+    if (nextToken != T_RPAR)
+      pl0_error(yytext, line_no, ")がない");
     nextToken = getToken();
     break;
   default:
@@ -576,6 +601,5 @@ int parse_FuncArgList_dash(int n_args) {
   } else {
     /* ε */
   }
-
   return n_args;
 }
