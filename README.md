@@ -2,16 +2,16 @@
 ここでは、2016年度に「言語処理系」(鹿児島高専/情報工学科/3年生向け)の授業の
 際に使用したプログラムコードを提示しています。(自分の忘備録を兼ねています)
 
-### コンパイル対象言語
+### 1. コンパイル対象言語
 * PL/0'
 * 簡単な文法G4
 
-### プログラムの説明
+### 2. プログラムの説明
 
-#### 1. [字句解析器(scannerディレクトリ下)](scanner)
+#### 2.1 [字句解析器(scannerディレクトリ下)](scanner)
   * [「PL/0'」用字句解析器(lex版)](scanner/pl0-scanner.l)
 
-#### 2. [簡単な文法G4(exp-parserディレクトリ下)](exp-parser)
+#### 2.2 [簡単な文法G4(exp-parserディレクトリ下)](exp-parser)
 
 第20回授業(後期第05回)p.247 で示した文法に対応する構文解析器等です。
 
@@ -21,7 +21,7 @@
   * [LL(1)構文解析器本体](exp-parser/exp-ll-parser01.c)
   * [サンプルファイル](sample/exp01.txt)
 
-#### 3. PL/0'用構文解析器/コンパイラ(pl0-compilerディレクトリ下)
+#### 2.3 PL/0'用構文解析器/コンパイラ(pl0-compilerディレクトリ下)
 * 第20回授業(後期第05回) p. 257のPL/0'構文解析器のプログラム No.1
   * [字句解析用サブルーチン(lex版)](pl0-compiler/pl0-scanner.l)
   * [トークン定義ファイル](scanner/tokentable.h)
@@ -49,7 +49,13 @@
   * [エラー処理関数など](pl0-compiler/misc.c)
   * [エラー処理関数など ヘッダーファイル](pl0-compiler/misc.h)
 
-### 利用方法
+#### 2.4 仮想CPU(対象CPU)のアセンブリ言語仕様および実行環境(vcpuディレクトリ下)
+* [仮想CPUの命令説明(インストラクションセット)](vcpu/instruction-set.md)
+* [仮想CPU実行環境(Ruby 2.x版)](vcpu/pl0dashvm.rb)
+
+### 3. サンプルプログラム(sampleディレクトリ下)
+*
+### 4. 利用方法
 
 ````console
 $ git clone https://github.com/simozono/2016-pl0dash
