@@ -122,7 +122,7 @@ int reg_param_in_tbl(char *id_name, int line_no, int func_ptr) {
   t_ptr = add_table(param_id, id_name, line_no);
   symbol_table[func_ptr].data.func.n_params++;
   func_parm_addr++;
-  symbol_table[func_ptr].data.address = func_parm_addr;
+  symbol_table[t_ptr].data.address = func_parm_addr;
   return t_ptr;
 }
 
@@ -191,22 +191,30 @@ int get_blocklevel() {
 
 
 /* 参照情報表示 */
-void reference_info(char *ref_name, int ref_line, id_type type, int def_line) {
-  char *type_st ;
-
-  switch (type) {
+void reference_info(char *ref_name, int ref_line, int ptr) {
+  struct table_entry t_ent ;
+  char *type_st;
+  int address;
+  
+  t_ent = get_table(ptr);
+  
+  switch (t_ent.type) {
   case const_id:
-    type_st = "定数"; break;
+    type_st = "定数"; address = t_ent.data.value;
+    break;
   case var_id:
-    type_st = "変数"; break;
+    type_st = "変数"; address = t_ent.data.address;
+    break;
   case func_id:
-    type_st = "関数名"; break;
+    type_st = "関数名"; address = t_ent.data.func.address;
+    break;
   case param_id:
-    type_st = "仮引数"; break;
+    type_st = "仮引数"; address = t_ent.data.address;
+    break;
   default:
     type_st = ""; break;
   }
 
-  printf ("情報:%3d 行目の %s は%3d 行目で宣言された %s です\n",
-	  ref_line, ref_name, def_line, type_st);
+  printf ("情報:%3d 行目の %s は%3d 行目で宣言された %s です。アドレスは %d\n",
+	  ref_line, ref_name, t_ent.line_no, type_st, address);
 }

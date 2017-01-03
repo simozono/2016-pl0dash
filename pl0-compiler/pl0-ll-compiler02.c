@@ -1,7 +1,7 @@
 /* PL/0' 用 LL(1)再帰下降型コンパイラ No.02
  *              2016年後期 鹿児島高専
  *              3年生 言語処理系 授業用
- *   *
+ *   * 最終バージョン
  */
 
 #include <stdio.h>
@@ -50,9 +50,8 @@ void parse_Factor(void);
 int parse_FuncArgList(int n_args);
 int parse_FuncArgList_dash(int n_args);
 
+int nextToken;    /* 次のトークンが入る変数 */
 int current_func; /* 現在処理している関数の記号表での位置 */
-
-int nextToken; /* 次のトークンが入る変数 */
 
 int getToken(void) { /* トークンを取得する関数 */
   int token = yylex();
@@ -235,7 +234,7 @@ void parse_VarIdList() {
   /* 変数名の登録 */
   strcpy(var_name, yytext);
   reg_var_in_tbl(var_name, line_no);
-  if (get_blocklevel > 0) gencode_no_arg(pushup); /* 関数内なら領域確保 */
+  if (get_blocklevel() > 0) gencode_no_arg(pushup); /* 関数内なら領域確保 */
   nextToken = getToken();
   parse_VarIdList_dash();
 }
@@ -251,7 +250,7 @@ void parse_VarIdList_dash() {
     /* 変数名の登録 */
     strcpy(var_name, yytext);
     reg_var_in_tbl(var_name, line_no);
-    if (get_blocklevel > 0) gencode_no_arg(pushup); /* 関数内なら領域確保 */
+    if (get_blocklevel() > 0) gencode_no_arg(pushup); /* 関数内なら領域確保 */
     nextToken = getToken();
     parse_VarIdList_dash();
   } else {
@@ -440,7 +439,7 @@ void parse_StatementList_dash() {
 }
 
 void parse_Condition() {
-  int operator ; /* T_EQ や T_GT を一時格納 */
+  int operator = -1; /* T_EQ や T_GT を一時格納 */
 
   if (nextToken == T_ODD) {
     nextToken = getToken();
@@ -554,7 +553,7 @@ void parse_Factor() {
     if (t_ptr == 0)
       pl0_error(id_name, line_no, "その変数/定数/関数はない");
     t_ent = get_table(t_ptr);
-
+    /* reference_info(id_name, line_no, t_ptr); */
     switch(t_ent.type) {
     case func_id: /* T_IDが関数名の場合 */
       nextToken = getToken();

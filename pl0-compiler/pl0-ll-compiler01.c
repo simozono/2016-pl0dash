@@ -422,7 +422,7 @@ void parse_StatementList_dash() {
 }
 
 void parse_Condition() {
-  int operator ; /* T_EQ や T_GT を一時格納 */
+  int operator = -1; /* T_EQ や T_GT を一時格納 */
 
   if (nextToken == T_ODD) {
     nextToken = getToken();
