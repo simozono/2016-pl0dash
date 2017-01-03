@@ -5,12 +5,13 @@ YACC = bison
 
 EXT_TOKENTABLE = ../scanner/tokentable.h
 
-all: pl0-ll-parser01 pl0-ll-parser02 pl0-ll-parser03 pl0-ll-compiler01 pl0-lr-parser01
+all: pl0-ll-parser01 pl0-ll-parser02 pl0-ll-parser03 pl0-ll-compiler01 pl0-ll-compiler02 pl0-lr-parser01
 clean:
 	rm -f pl0-ll-parser01 pl0-ll-parser01.o
 	rm -f pl0-ll-parser02 pl0-ll-parser02.o
 	rm -f pl0-ll-parser03 pl0-ll-parser03.o
 	rm -f pl0-ll-compiler01 pl0-ll-compiler01.o
+	rm -f pl0-ll-compiler02 pl0-ll-compiler02.o
 	rm -f pl0-scanner-ll.c pl0-scanner-ll.o
 	rm -f misc.o codegen.o symbol_table01.o symbol_table02.o
 	rm -f pl0-lr-parser01 pl0-lr-parser01.c pl0-lr-parser01.o
@@ -25,6 +26,8 @@ pl0-ll-parser03: pl0-ll-parser03.o pl0-scanner-ll.o misc.o symbol_table01.o
 pl0-ll-parser03.o: pl0-ll-parser03.c misc.h symbol_table01.h
 pl0-ll-compiler01: pl0-ll-compiler01.o pl0-scanner-ll.o misc.o symbol_table02.o codegen.o
 pl0-ll-compiler01.o: pl0-ll-compiler01.c misc.h symbol_table02.h codegen.h
+pl0-ll-compiler02: pl0-ll-compiler02.o pl0-scanner-ll.o misc.o symbol_table02.o codegen.o
+pl0-ll-compiler02.o: pl0-ll-compiler02.c misc.h symbol_table02.h codegen.h
 
 misc.o: misc.c misc.h
 symbol_table01.o: symbol_table01.c symbol_table01.h

@@ -12,10 +12,13 @@
 static struct table_entry symbol_table[MAX_TABLE_SIZE]; /* 記号表 */
 static int symbol_table_ptr = 0; /* 記号表の現在位置を示すポインタ */
 
-static int heap_address = 800; /* 大域変数(ブロック0)用ヒープアドレス */
+static int heap_address   = 800; /* 大域変数(ブロック0)用ヒープアドレス */
+static int func_var_addr  = 0;   /* 関数内定数/変数のアドレス  */
+static int func_parm_addr = 0;   /* 関数内仮引数のアドレス     */
 
 static int stack_for_symbol_table[MAX_STACK_SIZE]; /* 意味解析用 ptr を覚えておく */
 static int stack_ptr = 0; /* 上記スタックの現在位置を示すポインタ */
+
 
 /* 同一スコープ内で二重登録していないかチェック */
 int double_register_check(char *id_name) {
@@ -99,6 +102,8 @@ int reg_var_in_tbl(char *id_name, int line_no) {
     symbol_table[t_ptr].data.address = heap_address;
     heap_address++;
   } else { /* ブロックレベル1以上 */
+    func_var_addr--;
+    symbol_table[t_ptr].data.address = func_var_addr;
   }
   return t_ptr;
 }
@@ -116,13 +121,53 @@ int reg_param_in_tbl(char *id_name, int line_no, int func_ptr) {
   int t_ptr ;
   t_ptr = add_table(param_id, id_name, line_no);
   symbol_table[func_ptr].data.func.n_params++;
+  func_parm_addr++;
+  symbol_table[func_ptr].data.address = func_parm_addr;
   return t_ptr;
 }
 
-/* ブロックレベル処理関連 */
+/* 関数の開始コードアドレス登録 */
+int reg_func_address(int func_ptr, int code_ptr) {
+  if (symbol_table[func_ptr].type != func_id) {
+    pl0_error(symbol_table[func_ptr].id_name, 0,
+              "set_func_addressがおかしい");
+  }
+  symbol_table[func_ptr].data.func.address = code_ptr;
+  return func_ptr;
+}
 
+int get_func_params(int func_ptr) {
+  if (symbol_table[func_ptr].type != func_id) {
+    pl0_error(symbol_table[func_ptr].id_name, 0,
+              "get_func_paramsがおかしい");
+  }
+  return symbol_table[func_ptr].data.func.n_params;
+}
+
+
+/* 仮引数宣言部の最後で呼ばれ、仮引数のアドレス再計算 */
+int end_param(int func_ptr) {
+  /* 以下危険なコード */
+  /* func_ptr の次のエントリーがfuncの */
+  /* 仮引数であることを想定している */
+
+  int n = symbol_table[func_ptr].data.func.n_params ; /* 関数の引数の個数 */
+  int i;
+  int addr = 0;
+  for (i = 0; i < n; i++) {
+    addr = symbol_table[func_ptr+1+i].data.address;
+    symbol_table[func_ptr+1+i].data.address = 2+(n-addr);
+  }
+  return 0;
+}
+
+
+/* ブロックレベル処理関連 */
 /* ブロックレベルを上げる */
 void blocklevel_up() {
+  func_var_addr =  0;
+  func_parm_addr = 0;
+  
   if (stack_ptr == 0) { /* 初期化 */
     stack_for_symbol_table[stack_ptr] = 0;
   }
@@ -138,6 +183,12 @@ void blocklevel_down() {
   symbol_table_ptr = stack_for_symbol_table[stack_ptr];
   stack_ptr--;
 }
+
+/* 現在のブロックレベルを調べる */
+int get_blocklevel() {
+  return stack_ptr;
+}
+
 
 /* 参照情報表示 */
 void reference_info(char *ref_name, int ref_line, id_type type, int def_line) {
