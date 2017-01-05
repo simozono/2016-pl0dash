@@ -1,22 +1,24 @@
-const n = 10;
-var a, x;
+const n=5;
+var x;
 
-function expo(x, y)
+function expo(x,y)
+  var i, ret;
   begin
-    if y < 2 then
+    i:=1; ret:=1;
+    while i <= y do
     begin
-      return x;
+      ret:=ret*x;
+      i:=i+1;
     end;
-    return x * expo(x, y-1);
+    return ret;
   end;
 
 begin
-  a := 3;
-  x := 1;
+  x:=1;
   while x <= n do
   begin
-    write expo(a, x);
+    write expo(x, x);
     writeln;
-    x := x + 1;
+    x:=x+1;
   end;
 end.
