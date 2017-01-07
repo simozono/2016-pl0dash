@@ -101,7 +101,7 @@ $
 
   * コンパイル(コンパイル結果を test16.out に保存)
   ```console
-  $ ../pl0-compiler/pl0-ll-compiler02 -o test16.out test16.pl0
+  $ ./pl0-ll-compiler02 -o test16.out test16.pl0
   $
   ```
 
