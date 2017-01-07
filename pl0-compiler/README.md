@@ -56,7 +56,7 @@ $
 
 #### 2. PL/0'用コンパイラ
 
-* 第26回授業(後期第11回)までの説明を実装した PL/0' 用コンパイラ
+* 第26回授業(後期第11回)までの説明を実装した PL/0' 用コンパイラ(関数非対応)
   * [LL(1)コンパイラ本体 No.1](pl0-ll-compiler01.c)
   * [記号表 No.2 プログラム](symbol_table02.c)
   * [記号表 No.2 ヘッダーファイル](symbol_table02.h)
@@ -65,7 +65,49 @@ $
   * [エラー処理関数など](misc.c)
   * [エラー処理関数など ヘッダーファイル](misc.h)
 
-* 使用方法
+* 第27回授業(後期第12回)までの説明を実装した PL/0' 用コンパイラ(関数対応)
+  * [LL(1)コンパイラ本体 No.2](pl0-ll-compiler02.c)
+  * [記号表 No.2 プログラム](symbol_table02.c)
+  * [記号表 No.2 ヘッダーファイル](symbol_table02.h)
+  * [コード生成プログラム](codegen.c)
+  * [コード生成プログラム ヘッダーファイル](codegen.h)
+  * [エラー処理関数など](misc.c)
+  * [エラー処理関数など ヘッダーファイル](misc.h)
 
-```console
-```
+* コマンドオプションなど
+  * コンパイル(コンパイル結果は標準出力)
+  ```console
+  $ ./pl0-ll-compiler02 test16.pl0
+  JMP 64
+  PUSH FP
+  LOAD FP,SP
+  PUSHUP
+  LOAD A,#(FP+3)
+  ...
+  $
+  ```
+
+  * コンパイル(コンパイル結果は標準出力。番地がつく)
+  ```console
+  $ ./pl0-ll-compiler02 -n test16.pl0
+     1 JMP 64
+     2 PUSH FP
+     3 LOAD FP,SP
+     4 PUSHUP
+     5 LOAD A,#(FP+3)
+  ...
+  $
+  ```
+
+  * コンパイル(コンパイル結果を test16.out に保存)
+  ```console
+  $ ../pl0-compiler/pl0-ll-compiler02 -o test16.out test16.pl0
+  $
+  ```
+
+  * 使用法表示
+   ```console
+   $ ./pl0-ll-compiler02 -h
+   ./pl0-ll-compiler02 [-h] [-n] [-o output_file] source_file
+   $
+   ```

@@ -49,6 +49,15 @@
   * [エラー処理関数など](pl0-compiler/misc.c)
   * [エラー処理関数など ヘッダーファイル](pl0-compiler/misc.h)
 
+* 第27回授業(後期第12回)の説明を実装したPL/0'用コンパイラ No.2 (関数対応)
+  * [LL(1)コンパイラ本体 No.2](pl0-compiler/pl0-ll-compiler02.c)
+  * [記号表 No.2 プログラム](pl0-compiler/symbol_table02.c)
+  * [記号表 No.2 ヘッダーファイル](pl0-compiler/symbol_table02.h)
+  * [コード生成プログラム](pl0-compiler/codegen.c)
+  * [コード生成プログラム ヘッダーファイル](pl0-compiler/codegen.h)
+  * [エラー処理関数など](pl0-compiler/misc.c)
+  * [エラー処理関数など ヘッダーファイル](pl0-compiler/misc.h)
+
 #### 2.4 仮想CPU(対象CPU)のアセンブリ言語仕様および実行環境(vcpuディレクトリ下)
 * [仮想CPUの命令説明(インストラクションセット)](vcpu/instruction-set.md)
 * [仮想CPU実行環境(Ruby 2.x版)](vcpu/pl0dashvm.rb)
